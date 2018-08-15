@@ -1,5 +1,6 @@
 //-------------------------React Boiler Plate
 import React, { Component } from 'react';
+import _ from 'lodash';
 import ReactDOM from 'react-dom';
 import YTSearch from 'youtube-api-search';
 //-------------------------Component Files
@@ -21,20 +22,25 @@ class App extends Component {
       selectedVideo: null
      };
 
-    YTSearch({key: API_KEY, term: 'surfboards'}, (videos) => {
+     this.videoSearch('surfboards');
+  };
+
+  videoSearch(term) {
+    YTSearch({key: API_KEY, term: term}, (videos) => {
       this.setState({
         videos: videos,
         selectedVideo: videos[0]
-       })
-    })
-  }
+       });
+    });
+  };
 
   render() {
     const { videos } = this.state;
     const { selectedVideo } = this.state;
+    const videoSearch =_.debounce((term) => {this.videoSearch(term) }, 300);
     return (
       <div>
-        <SearchBar />
+        <SearchBar onSearchTermChange={term => this.videoSearch(term)}/>
         <VideoPlayer video={selectedVideo}/>
         <VideoList 
           onVideoSelect={selectedVideo => this.setState({selectedVideo})}
